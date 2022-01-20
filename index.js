@@ -16,6 +16,8 @@ const admin_rn = 'Admin'
 
 
 
+// Invite link: https://discord.com/api/oauth2/authorize?client_id=933600223127801856&permissions=268512256&scope=bot
+
 
 client.login(TOKEN);
 
