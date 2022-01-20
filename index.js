@@ -44,7 +44,7 @@ client.on('messageCreate', msg => {
 	if (msg.content.startsWith(prefix + 'whitelist-wallet') && msg.channel.id === whitelist_channel_id && msg.member.roles.cache.some(role => role.name === whitelist_rn)) {
 		// Split up the message
 		const pieces = msg.content.split(' ');
-		console.log(pieces.length);
+
 		if (pieces.length !== 3) {
 			msg.reply('Please make sure the wallet address and wallet type are in the command\ne.g. ~whitelist-wallet 6969696969420 ETH');
 			return;
@@ -58,7 +58,9 @@ client.on('messageCreate', msg => {
 		let is_valid = false;
 		try {
 			is_valid = wallet_validator.validate(address, type);
+			console.log(is_valid);
 			msg.reply('The address was valid and your wallet has been whitelisted!');
+			console.log('checkpoint 2');
 		} catch {
 			msg.reply('Something is wrong with either the address or the currency type. Please try again');
 			return;
