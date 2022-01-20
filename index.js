@@ -5,14 +5,19 @@ const TOKEN = process.env.TOKEN;
 
 
 const prefix = '~';
-const server_id = '930655546665742416';
-const whitelist_channel_id = '933822117852618793';
+// const server_id = '930655546665742416';
+// const whitelist_channel_id = '933822117852618793';
+
+const server_id = '690731272875802684';
+const whitelist_channel_id = '933601900861997076';
+const whitelist_rn = 'whitelist';
+const admin_rn = 'Admin';
 
 const wallet_validator = require('wallet-address-validator');
 
 // Role names
-const whitelist_rn = 'Whitelisted Mutants';
-const admin_rn = 'Mutant Apes'
+// const whitelist_rn = 'Whitelisted Mutants';
+// const admin_rn = 'Mutant Apes'
 
 
 
@@ -49,8 +54,9 @@ client.on('messageCreate', msg => {
 			msg.reply('Please make sure the wallet address and wallet type are in the command\ne.g. ~whitelist-wallet 6969696969420 ETH');
 			return;
 		}
-		const type = pieces[1];
-		const address = pieces[2];
+
+		const address = pieces[1];
+		const type = pieces[2];
 
 
 		// Validate the address and whitelist it or let the user know what went wrong
@@ -58,9 +64,11 @@ client.on('messageCreate', msg => {
 		let is_valid = false;
 		try {
 			is_valid = wallet_validator.validate(address, type);
-			console.log(is_valid);
-			msg.reply('The address was valid and your wallet has been whitelisted!');
-			console.log('checkpoint 2');
+			if (is_valid) {
+				msg.reply('The address was valid and your wallet has been whitelisted!');
+			} else {
+				msg.reply('This is not a valid address')
+			}
 		} catch {
 			msg.reply('Something is wrong with either the address or the currency type. Please try again');
 			return;
