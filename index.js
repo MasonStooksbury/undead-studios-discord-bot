@@ -5,19 +5,14 @@ const TOKEN = process.env.TOKEN;
 
 
 const prefix = '~';
-// const server_id = '930655546665742416';
-// const whitelist_channel_id = '933822117852618793';
-
-const server_id = '690731272875802684';
-const whitelist_channel_id = '933601900861997076';
-const whitelist_rn = 'whitelist';
-const admin_rn = 'Admin';
+const server_id = '930655546665742416';
+const whitelist_channel_id = '933822117852618793';
 
 const wallet_validator = require('wallet-address-validator');
 
 // Role names
-// const whitelist_rn = 'Whitelisted Mutants';
-// const admin_rn = 'Mutant Apes'
+const whitelist_rn = 'Whitelisted Mutants';
+const admin_rn = 'Mutant Apes'
 
 
 
