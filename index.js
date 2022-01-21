@@ -35,22 +35,25 @@ client.on('ready', () => {
 
 // When the bot detects that the message has been sent
 client.on('messageCreate', msg => {
-	const guild = client.guilds.cache.get(server_id);
-
 	// If this isn't a command, or the user is a bot, or this is a DM: leave
 	if (!msg.content.startsWith(prefix) || msg.author.bot || msg.channel.type == 'dm') return;
+	
+	const guild = client.guilds.cache.get(server_id);
 
 	// whitelist-wallet command
 	// Whitelisted users can run this command
 	// If the message is in the whitelist channel and they user has the "whitelist" role
-	if (msg.content.startsWith(prefix + 'whitelist-wallet') && msg.channel.id === whitelist_channel_id && msg.member.roles.cache.some(role => role.name === whitelist_rn)) {
+	if (msg.content.startsWith(prefix + 'whitelist-wallet') && msg.channel.id === whitelist_channel_id && msg.member.roles.cache.some(role => role.name === whitelist_rn)) {		
 		// Check if this person is already in the list or not. If they aren't, add their address to the whitelist if it isn't already there
 		fs.readFile(wallet_whitelist_txt, {encoding:'utf8', flag:'r'}, function(err, data) {
 			if (err) throw err;
 
 			// If this user already has a whitelisted address, tell them that
 			if (data.includes(msg.author.id)) {
-				return msg.reply('You have already whitelisted an address. Please remove your entry if you want to add a different address');
+				msg.reply('You have already whitelisted an address. Please remove your entry if you want to add a different address');
+				// Delete invocation command
+				msg.delete();
+				return;
 			}
 
 			// Split up the message
@@ -59,6 +62,8 @@ client.on('messageCreate', msg => {
 			// If there is an error with how the user formatted their command
 			if (pieces.length !== 3) {
 				msg.reply('Please make sure the wallet address and wallet type are in the command\ne.g. ~whitelist-wallet 6969696969420 ETH');
+				// Delete invocation command
+				msg.delete();
 				return;
 			}
 
@@ -80,12 +85,18 @@ client.on('messageCreate', msg => {
 					// Write the entry to the whitelist file
 					var stream = fs.createWriteStream(wallet_whitelist_txt, { flags: 'a' });
 					stream.write(whitelist_entry);
+					// Delete invocation command
+					msg.delete();
 					return;
 				} else {
 					msg.reply('This is not a valid address')
+					// Delete invocation command
+					msg.delete();
 				}
 			} catch {
 				msg.reply('Something is wrong with either the address or the currency type. Please try again');
+				// Delete invocation command
+				msg.delete();
 				return;
 			}
 		});
@@ -115,19 +126,17 @@ client.on('messageCreate', msg => {
 			
 			// For every line in the file, only write back the ones that AREN'T the user that submitted the command
 			lines.forEach(line => {
-				if (!line.includes(msg.author.id)) {
+				if (!line.includes(person_to_remove)) {
 					stream.write(`${line}\n`);
 				}
 			});
+			msg.reply('Wallet was successfully removed!');
 		});
 	}
 
 	// show-whitelist
 	// Only Admins can run this command
 	if (msg.content.startsWith(prefix + 'show-whitelist') && msg.member.roles.cache.some(role => role.name === admin_rn)) {
-		// Delete command
-		msg.delete();
-
 		fs.readFile(wallet_whitelist_txt, {encoding:'utf8', flag:'r'}, function(err, data) {
 			if (err) throw err;
 
@@ -137,6 +146,8 @@ client.on('messageCreate', msg => {
 			channel.send(data);
 		});
 
+		// Delete invocation command
+		msg.delete();
 	}
 
 	// whitelist-user
