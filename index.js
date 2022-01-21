@@ -1,21 +1,19 @@
 require('dotenv').config();
 const { Client, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+
+
 const TOKEN = process.env.TOKEN;
-
-
-const prefix = '~';
-const server_id = '930655546665742416';
-const whitelist_channel_id = '933822117852618793';
-const admin_channel_id = '933873121121955880';
+const prefix = process.env.PREFIX;
+const server_id = process.env.SERVER_ID;
+const whitelist_channel_id = process.env.WHITELIST_CHANNEL_ID;
+const admin_channel_id = process.env.ADMIN_CHANNEL_ID;
+const whitelist_rn = process.env.WHITELIST_RN;
+const admin_rn = process.env.ADMIN_RN;
 
 // Dependencies
 const wallet_validator = require('wallet-address-validator');
 const fs = require('fs');
-
-// Role names
-const whitelist_rn = 'Whitelisted Mutants';
-const admin_rn = 'Mutant Apes'
 
 // Files
 const wallet_whitelist_txt = './wallet-whitelist.txt';
@@ -37,7 +35,6 @@ client.on('ready', () => {
 
 // When the bot detects that the message has been sent
 client.on('messageCreate', msg => {
-
 	const guild = client.guilds.cache.get(server_id);
 
 	// If this isn't a command, or the user is a bot, or this is a DM: leave
@@ -98,7 +95,7 @@ client.on('messageCreate', msg => {
 	// Whitelisted users can run this command
 	// ~unwhitelist-wallet @LambBrainz (this removes the mentioned user)
 	// ~unwhitelist-wallet (this removes the person making the command)
-	if (msg.content.startsWith(prefix + 'unwhitelist-wallet') && msg.channel.id === whitelist_channel_id && msg.member.roles.cache.some(role => role.name === whitelist_rn)) {
+	if (msg.content.startsWith(prefix + 'unwhitelist-wallet') && msg.member.roles.cache.some(role => role.name === admin_rn)) {
 		let person_to_remove = '';
 		
 		// If there is no user mentioned, assume the person making the command is the one to remove
@@ -128,7 +125,9 @@ client.on('messageCreate', msg => {
 	// show-whitelist
 	// Only Admins can run this command
 	if (msg.content.startsWith(prefix + 'show-whitelist') && msg.member.roles.cache.some(role => role.name === admin_rn)) {
-		// const data = [];
+		// Delete command
+		msg.delete();
+
 		fs.readFile(wallet_whitelist_txt, {encoding:'utf8', flag:'r'}, function(err, data) {
 			if (err) throw err;
 
