@@ -131,6 +131,7 @@ client.on('messageCreate', msg => {
 				}
 			});
 			msg.reply('Wallet was successfully removed!');
+			msg.delete();
 		});
 	}
 
@@ -168,6 +169,7 @@ client.on('messageCreate', msg => {
 			person.roles.add(role);
 			msg.channel.send(`<@${person.user.id}> has been successfully whitelisted!`);
 		}
+		msg.delete();
 	}
 
 	// unwhitelist-user
@@ -188,5 +190,6 @@ client.on('messageCreate', msg => {
 			person.roles.remove(role);
 			msg.channel.send(`<@${person.user.id}> has been successfully removed from the whitelist!`);
 		}
+		msg.delete();
 	}
 });
