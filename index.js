@@ -30,6 +30,9 @@ client.on('ready', () => {
 });
 
 
+function sleep() {
+	return new Promise((resolve) => setTimeout(resolve, 1000));
+}
 
 
 
@@ -51,8 +54,9 @@ client.on('messageCreate', msg => {
 			// If this user already has a whitelisted address, tell them that
 			if (data.includes(msg.author.id)) {
 				msg.reply('You have already whitelisted an address. Please remove your entry if you want to add a different address');
-				// Delete invocation command
-				msg.delete();
+				sleep().then(() => {
+					msg.delete();
+				});
 				return;
 			}
 
@@ -62,8 +66,9 @@ client.on('messageCreate', msg => {
 			// If there is an error with how the user formatted their command
 			if (pieces.length !== 3) {
 				msg.reply('Please make sure the wallet address and wallet type are in the command\ne.g. ~whitelist-wallet 6969696969420 ETH');
-				// Delete invocation command
-				msg.delete();
+				sleep().then(() => {
+					msg.delete();
+				});
 				return;
 			}
 
@@ -85,18 +90,21 @@ client.on('messageCreate', msg => {
 					// Write the entry to the whitelist file
 					var stream = fs.createWriteStream(wallet_whitelist_txt, { flags: 'a' });
 					stream.write(whitelist_entry);
-					// Delete invocation command
-					msg.delete();
+					sleep().then(() => {
+						msg.delete();
+					});
 					return;
 				} else {
 					msg.reply('This is not a valid address')
-					// Delete invocation command
-					msg.delete();
+					sleep().then(() => {
+						msg.delete();
+					});
 				}
 			} catch {
 				msg.reply('Something is wrong with either the address or the currency type. Please try again');
-				// Delete invocation command
-				msg.delete();
+				sleep().then(() => {
+					msg.delete();
+				});
 				return;
 			}
 		});
@@ -131,7 +139,9 @@ client.on('messageCreate', msg => {
 				}
 			});
 			msg.reply('Wallet was successfully removed!');
-			msg.delete();
+			sleep().then(() => {
+				msg.delete();
+			});
 		});
 	}
 
@@ -144,11 +154,12 @@ client.on('messageCreate', msg => {
 			// Find the channel we want to cross-post to and store its channel object
 			const channel = msg.guild.channels.cache.find(channel => channel.id === admin_channel_id);
 			// Then send our re-formatted string and our images (if any) to that channel
-			channel.send(data);
+			channel.send(data + '.');
 		});
 
-		// Delete invocation command
-		msg.delete();
+		sleep().then(() => {
+			msg.delete();
+		});
 	}
 
 	// whitelist-user
@@ -169,7 +180,9 @@ client.on('messageCreate', msg => {
 			person.roles.add(role);
 			msg.channel.send(`<@${person.user.id}> has been successfully whitelisted!`);
 		}
-		msg.delete();
+		sleep().then(() => {
+			msg.delete();
+		});
 	}
 
 	// unwhitelist-user
@@ -190,6 +203,8 @@ client.on('messageCreate', msg => {
 			person.roles.remove(role);
 			msg.channel.send(`<@${person.user.id}> has been successfully removed from the whitelist!`);
 		}
-		msg.delete();
+		sleep().then(() => {
+			msg.delete();
+		});
 	}
 });
